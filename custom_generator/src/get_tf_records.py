@@ -13,7 +13,7 @@ MAX_STR_LEN = 20
 null = 43
 
 def get_char_mapping():
-    label_file = '../../research/attention_ocr/datasets/data/fsns/charset_size=134.txt'
+    label_file = '/content/models/research/attention_ocr/python/datasets/testdata/fsns/charset_size=134.txt'
     with open(label_file, "r") as f:
         char_mapping = {}
         rev_char_mapping = {}
