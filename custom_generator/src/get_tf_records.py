@@ -9,11 +9,11 @@ from tensorflow.python.platform import gfile
 ANNOTATION_FILE = 'data/annot_file.csv'
 CROP_DIR = 'data/crops'
 
-MAX_STR_LEN = 20
-null = 43
+MAX_STR_LEN = 16
+null = 133
 
 def get_char_mapping():
-    label_file = '/content/models/research/attention_ocr/python/datasets/testdata/fsns/charset_size=134.txt'
+    label_file = '/content/models/research/attention_ocr/python/datasets/data/number_plates/charset-labels.txt'
     with open(label_file, "r") as f:
         char_mapping = {}
         rev_char_mapping = {}
@@ -49,6 +49,7 @@ def get_tf_example(img_file, annotation, num_of_views=1):
 	char_ids_padded = padding_char_ids(char_ids_unpadded)
 	char_ids_unpadded = [int(x) for x in char_ids_unpadded]
 	char_ids_padded = [int(x) for x in char_ids_padded]
+    
 
 	features = tf.train.Features(feature = {
 	'image/format': get_bytelist_feature([b'png']),
@@ -61,6 +62,7 @@ def get_tf_example(img_file, annotation, num_of_views=1):
 	'image/text': get_bytelist_feature([annotation.encode('utf-8')])
 		}
 	)
+	#print(get_intlist_feature(char_ids_padded))
 	example = tf.train.Example(features=features)
 
 	return example

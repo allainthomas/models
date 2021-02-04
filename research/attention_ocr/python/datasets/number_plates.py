@@ -21,9 +21,9 @@ DEFAULT_CONFIG = {
     'num_of_views':
         1,
     'max_sequence_length':
-        20, # TO BE CONFIGURED
+        16, # TO BE CONFIGURED
     'null_code':
-        43,
+        133,
     'items_to_descriptions': {
         'image':
             'A 3 channel color image.',
