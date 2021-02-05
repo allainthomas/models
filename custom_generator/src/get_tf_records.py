@@ -1,7 +1,7 @@
 import os
 import cv2
 import random
-import numpy as np 
+import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow.python.platform import gfile
@@ -49,7 +49,7 @@ def get_tf_example(img_file, annotation, num_of_views=1):
 	char_ids_padded = padding_char_ids(char_ids_unpadded)
 	char_ids_unpadded = [int(x) for x in char_ids_unpadded]
 	char_ids_padded = [int(x) for x in char_ids_padded]
-    
+
 
 	features = tf.train.Features(feature = {
 	'image/format': get_bytelist_feature([b'png']),
@@ -76,7 +76,7 @@ def get_tf_records():
 		os.remove(test_file)
 	train_writer = tf.io.TFRecordWriter(train_file)
 	test_writer = tf.io.TFRecordWriter(test_file)
-	annot = pd.read_csv(ANNOTATION_FILE)
+	annot = pd.read_csv(ANNOTATION_FILE, sep = ';', nrows = 750)
 	files = list(annot['files'].values)
 	random.shuffle(files)
 
@@ -85,7 +85,7 @@ def get_tf_records():
 		annotation = annot[annot['files'] == file]
 		annotation = annotation['text'].values[0]
 		example = get_tf_example(CROP_DIR + '/' + file, annotation)
-		if i < 250:
+		if i < 650:
 			train_writer.write(example.SerializeToString())
 		else:
 			test_writer.write(example.SerializeToString())
