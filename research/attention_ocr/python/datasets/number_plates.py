@@ -17,7 +17,7 @@ DEFAULT_CONFIG = {
     },
     'charset_filename':
         'charset-labels.txt',
-    'image_shape': (200,100,3),#(max_width, max_height, 3),
+    'image_shape': (100,200,3),#(max_width, max_height, 3),
     'num_of_views':
         1,
     'max_sequence_length':

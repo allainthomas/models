@@ -6,22 +6,25 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.python.platform import gfile
 
-ANNOTATION_FILE = 'data/annot_file.csv'
-CROP_DIR = 'data/crops'
+ANNOTATION_FILE = 'custom_generator/data/annot_file.csv'
+CROP_DIR = 'custom_generator/data/crops'
 
 MAX_STR_LEN = 16
 null = 133
 
 def get_char_mapping():
-    label_file = '/content/models/research/attention_ocr/python/datasets/data/number_plates/charset-labels.txt'
-    with open(label_file, "r") as f:
-        char_mapping = {}
-        rev_char_mapping = {}
-        for line in f.readlines():
-            m, c = line.split("\n")[0].split("\t")
-            char_mapping[c] = m
-            rev_char_mapping[m] = c
-    return char_mapping, rev_char_mapping
+	label_file = 'research/attention_ocr/python/datasets/data/number_plates/charset-labels.txt'
+	with open(label_file, "r", encoding='utf-8') as f:
+		char_mapping = {}
+		rev_char_mapping = {}
+
+		for line in f.readlines():
+
+			m, c = line.split("\n")[0].split("\t")
+			char_mapping[c] = m
+			rev_char_mapping[m] = c
+
+	return char_mapping, rev_char_mapping
 
 def read_image(img_path):
 	return cv2.imread(img_path)
@@ -47,6 +50,10 @@ def get_tf_example(img_file, annotation, num_of_views=1):
 	split_text = [x for x in annotation]
 	char_ids_unpadded = [char_map[x] for x in split_text]
 	char_ids_padded = padding_char_ids(char_ids_unpadded)
+
+
+	print(char_ids_padded)
+
 	char_ids_unpadded = [int(x) for x in char_ids_unpadded]
 	char_ids_padded = [int(x) for x in char_ids_padded]
 
@@ -83,7 +90,7 @@ def get_tf_records():
 	for i, file in enumerate(files):
 		print('writing file:', file)
 		annotation = annot[annot['files'] == file]
-		annotation = annotation['text'].values[0]
+		annotation = str(annotation['text'].values[0])
 		example = get_tf_example(CROP_DIR + '/' + file, annotation)
 		if i < 650:
 			train_writer.write(example.SerializeToString())

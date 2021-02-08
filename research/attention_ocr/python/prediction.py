@@ -1,20 +1,8 @@
-"""A script to run inference on a set of image files.
-
-NOTE #1: The Attention OCR model was trained only using FSNS train dataset and
-it will work only for images which look more or less similar to french street
-names. In order to apply it to images from a different distribution you need
-to retrain (or at least fine-tune) it using images from that distribution.
-
-NOTE #2: This script exists for demo purposes only. It is highly recommended
-to use tools and mechanisms provided by the TensorFlow Serving system to run
-inference on TensorFlow models in production:
-https://www.tensorflow.org/serving/serving_basic
-
-Usage:
-python demo_inference.py --batch_size=32 \
-  --checkpoint=model.ckpt-399731\
-  --image_path_pattern=./datasets/data/fsns/temp/fsns_train_%02d.png
 """
+Usage:
+python prediction.py --checkpoint=/content/ocr_model/ocr_model/model.ckpt-6000\
+  --image_path_pattern=/content/models/custom_generator/data/crops/ --dataset_name=number_plates
+  """
 import numpy as np
 import PIL.Image
 import os
@@ -50,7 +38,8 @@ def load_images(img_paths, batch_size, dataset_name):
 
   for i in range(batch_size):
     path = img_paths[i]
-    pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb')).resize((200,200))
+    pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb')).resize((100,200))
+    #pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb'))
     images_actual_data[i, ...] = np.asarray(pil_image)
   return images_actual_data
 
