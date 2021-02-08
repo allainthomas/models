@@ -47,7 +47,7 @@ flags.DEFINE_string('work_dir', '/tmp',
                     'A directory to store temporary files.')
 flags.DEFINE_integer('version_number', 1, 'Version number of the model')
 flags.DEFINE_bool(
-    'export_for_serving', True,
+    'export_for_serving', False,
     'Whether the exported model accepts serialized tf.Example '
     'protos as input')
 
