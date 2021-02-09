@@ -192,11 +192,11 @@ def main(_):
     data = data_provider.get_data(
         dataset,
         FLAGS.batch_size,
-        augment=hparams.use_augment_input,
-        central_crop_size=common_flags.get_crop_size())
+        augment=hparams.use_augment_input)
     endpoints = model.create_base(data.images, data.labels_one_hot)
     total_loss = model.create_loss(data, endpoints)
     model.create_summaries(data, endpoints, dataset.charset, is_training=True)
+    
     init_fn = model.create_init_fn_to_restore(FLAGS.checkpoint,
                                               FLAGS.checkpoint_inception)
     if FLAGS.show_graph_stats:

@@ -55,8 +55,7 @@ def main(_):
   data = data_provider.get_data(
       dataset,
       FLAGS.batch_size,
-      augment=False,
-      central_crop_size=common_flags.get_crop_size())
+      augment=False)
   endpoints = model.create_base(data.images, labels_one_hot=None)
   model.create_loss(data, endpoints)
   eval_ops = model.create_summaries(

@@ -38,8 +38,8 @@ def load_images(img_paths, batch_size, dataset_name):
 
   for i in range(batch_size):
     path = img_paths[i]
-    pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb')).resize((100,200))
-    #pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb'))
+    #pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb')).resize((100,200))
+    pil_image = PIL.Image.open(tf.io.gfile.GFile(path, 'rb'))
     images_actual_data[i, ...] = np.asarray(pil_image)
   return images_actual_data
 

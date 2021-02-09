@@ -1,4 +1,5 @@
 import os
+import time
 import cv2
 import random
 import numpy as np
@@ -43,8 +44,11 @@ def get_intlist_feature(x):
 
 def get_tf_example(img_file, annotation, num_of_views=1):
 
+	with tf.io.gfile.GFile(img_file, 'rb') as fid:
+		encoded_jpg = fid.read()
+	# img = gfile.FastGFile(img_file, 'rb').read()
+
 	img_array = read_image(img_file)
-	img = gfile.FastGFile(img_file, 'rb').read()
 	char_map, _ = get_char_mapping()
 
 	split_text = [x for x in annotation]
@@ -52,15 +56,18 @@ def get_tf_example(img_file, annotation, num_of_views=1):
 	char_ids_padded = padding_char_ids(char_ids_unpadded)
 
 
-	print(char_ids_padded)
+	# print(char_ids_padded)
 
 	char_ids_unpadded = [int(x) for x in char_ids_unpadded]
 	char_ids_padded = [int(x) for x in char_ids_padded]
 
+	print(get_bytelist_feature([annotation.encode('utf-8')]))
 
 	features = tf.train.Features(feature = {
 	'image/format': get_bytelist_feature([b'png']),
-	'image/encoded': get_bytelist_feature([img]),
+
+	'image/encoded': get_bytelist_feature([encoded_jpg]),
+
 	'image/class': get_intlist_feature(char_ids_padded),
 	'image/unpadded_class': get_intlist_feature(char_ids_unpadded),
 	# 'image/height': get_intlist_feature([img_array.shape[0]]),
@@ -88,7 +95,7 @@ def get_tf_records():
 	random.shuffle(files)
 
 	for i, file in enumerate(files):
-		print('writing file:', file)
+		print('Iteration : ', i ,' writing file:', file)
 		annotation = annot[annot['files'] == file]
 		annotation = str(annotation['text'].values[0])
 		example = get_tf_example(CROP_DIR + '/' + file, annotation)
@@ -97,11 +104,53 @@ def get_tf_records():
 		else:
 			test_writer.write(example.SerializeToString())
 
+
 	train_writer.close()
 	test_writer.close()
 
+
+def _im_feature_to_im(example, key):
+	image_string = example.features.feature[key].bytes_list.value[0]
+	image_arr = np.frombuffer(image_string, dtype=np.uint8)
+
+	image = cv2.imdecode(image_arr, cv2.IMREAD_UNCHANGED)
+	assert image is not None, "Could not decode image"
+	return image
+
+def tf1_read_record():
+	# path_tfrecord = "research/attention_ocr/python/datasets/data/number_plates/train.tfrecord"
+	path_tfrecord = "train.tfrecord"
+
+	record_iterator = tf.compat.v1.python_io.tf_record_iterator(path_tfrecord)
+
+	for string_record in record_iterator:
+		example = tf.train.Example()
+		example.ParseFromString(string_record)
+
+		# image = example.features.feature["image/encoded"].bytes_list.value[0]
+		image = _im_feature_to_im(example, "image/encoded")
+		cv2.imshow("test", image)
+		cv2.waitKey(0)
+
+def tf2_read_record():
+	# path_tfrecord = "research/attention_ocr/python/datasets/data/number_plates/train.tfrecord"
+	path_tfrecord = "train.tfrecord"
+
+	dataset = tf.data.TFRecordDataset(path_tfrecord)
+	no = 0
+	for record in dataset:
+		record = tf.train.SequenceExample.FromString(record.numpy())
+
+		image = _im_feature_to_im(record, "image/encoded")
+		print("Number of images :", no)
+		no+=1
+		cv2.imshow("test", image)
+
 if __name__ == '__main__':
 	get_tf_records()
+
+
+
 
 
 
