@@ -736,6 +736,8 @@ class Model(object):
       all_assign_ops.append(assign_op)
       all_feed_dict.update(feed_dict)
 
+    # For the reduced charset restore all variables except AttentionOcr_v1/sequence_logit_fn/SQLR/softmax_w 
+    
     logging.info('\n variables_to_restore:\n%s',
                  utils.variables_to_restore().keys())
     logging.info('moving_average_variables:\n%s',

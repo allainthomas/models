@@ -46,7 +46,7 @@ def define():
     return
   _common_flags_defined = True
 
-  flags.DEFINE_integer('batch_size', 1,
+  flags.DEFINE_integer('batch_size', 32,
                        'Batch size.')
 
   flags.DEFINE_integer('crop_width', None,
